@@ -1,5 +1,5 @@
 import { getRandomPhotos } from "@/utils/getRandomPhotos";
-import { InferGetServerSidePropsType, InferGetStaticPropsType } from "next";
+import { InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
