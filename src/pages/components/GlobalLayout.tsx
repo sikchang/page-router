@@ -8,7 +8,7 @@ function GlobalLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (initialized.current) return;
-    let smoother;
+    let smoother: { kill(): void } | null = null;
 
     (async () => {
       if (typeof window === "undefined") return;
@@ -29,11 +29,31 @@ function GlobalLayout({ children }: { children: React.ReactNode }) {
           }
         });
 
-      } catch {}
+        smoother = ScrollSmoother.create({
+          wrapper: "#smooth-wrapper",
+          content: "#smooth-content",
+          smooth: 1.2,
+          effects: true,
+          normalizeScroll: true, // 모바일에서 속도 보정
+          ignoreMobileResize: true, // 모바일에서 리사이즈 무시
+        });
+
+        initialized.current = true;
+
+      } catch {
+        // ssr 환경에서는 gsap을 불러오지 않음
+        console.error('ScrollSmoother 초기화 실패');
+
+      }
     })();
 
-    return () => {};
-  });
+    return () => {
+      if (smoother) {
+        smoother.kill();
+        initialized.current = false;
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -47,10 +67,14 @@ function GlobalLayout({ children }: { children: React.ReactNode }) {
         />
         <link rel="shortcut icon" href="/vercel.svg" />
       </Head>
-      <div className="flex flex-col h-screen">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+      <div id='smooth-wrapper' className='min-h-screen'>
+        <div id='smooth-content' className='min-h-screen'>
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </div>
       </div>
     </>
   );

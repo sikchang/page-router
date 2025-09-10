@@ -43,7 +43,7 @@ export default function Home({
             ease: "power2.out",
             scrollTrigger: {
               trigger: el,
-              start: "top 80%",
+              start: "top 65%",
               toggleActions: "play none none reverse",
               // markers:true
             },
