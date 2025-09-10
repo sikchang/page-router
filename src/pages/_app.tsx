@@ -1,12 +1,24 @@
+import GlobalLayout from '@/pages/components/GlobalLayout';
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import GlobalLayout from '@/pages/components/GlobalLayout';
+import { NextPage } from 'next';
 
-export default function App({ Component, pageProps }: AppProps) {
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: React.ReactNode) => React.ReactNode;
+}
+
+export default function App({ Component, pageProps }: AppProps & {
+  Component: NextPageWithLayout
+}) {
+
+  const getLayout = Component.getLayout ??  ((page) => page);
+
+  console.log(getLayout);
+
   return (
     <>
       <GlobalLayout>
-        <Component {...pageProps} />
+        {getLayout(<Component {...pageProps} />)}
       </GlobalLayout>
     </>
   );
